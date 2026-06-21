@@ -1,0 +1,168 @@
+# config.py  —  eFootball Bot Configuration
+# ════════════════════════════════════════════
+# Fill in YOUR details below before running.
+# ════════════════════════════════════════════
+
+TOKEN    = '8010407192:AAH-9yMHbBsxcUE4Ss4WEkCVMX_U_a901C8'
+ADMINS   = [5172723202]       # Admin user IDs — cannot be removed
+MANAGERS = []                 # Loaded dynamically from DB at startup
+
+BOT_USERNAME     = '@esfootball_tournament_bot'
+CHANNEL_ID       = -1003079996041   # Members-only channel
+LOBBY_CHANNEL_ID = -1003079996041   # Where match announcements go
+GROUP_ID         = -1003079996041   # Telegram Group ID (set separately if different from channel)
+CHANNEL_USERNAME = 'xefootball_esports'
+
+REFERRAL_BONUS = 5.0          # TK per successful referral
+
+# ── Match timing ──────────────────────────
+MATCH_TIMEOUT_MINUTES  = 15   # Total time to submit screenshot
+MATCH_WARNING_MINUTES  = 10   # Send warning after this many minutes
+
+# ── Bangladesh Mobile Banking ─────────────
+# number: your personal number players send money to
+MOBILE_BANKING = {
+    'bkash':  {'name': 'Bkash',  'number': '01914573762', 'emoji': '🟣'},
+    'nagad':  {'name': 'Nagad',  'number': '01914573762', 'emoji': '🟠'},
+    'rocket': {'name': 'Rocket', 'number': '01914573762', 'emoji': '🔵'},
+    'upay':   {'name': 'Upay',   'number': '01914573762', 'emoji': '🟢'},
+}
+MINIMUM_DEPOSIT    = 50.0
+MINIMUM_WITHDRAWAL = 100.0
+
+# ── USDT Rates (stored in DB settings, these are defaults) ───
+# Deposit rate:  user sends 1 USDT → gets USDT_DEPOSIT_RATE TK
+# Withdraw rate: user spends USDT_WITHDRAW_RATE TK → gets 1 USDT
+USDT_DEPOSIT_RATE_DEFAULT  = 118.0
+USDT_WITHDRAW_RATE_DEFAULT = 122.0
+MIN_USDT_DEPOSIT           = 1.0
+MIN_USDT_WITHDRAWAL        = 2.0
+
+# ── On-chain wallet addresses (optional, for direct USDT) ─────
+USDT_TRC20_ADDRESS = ''   # Leave empty if not using on-chain
+USDT_BEP20_ADDRESS = ''
+USDT_ERC20_ADDRESS = ''
+
+# ── Crypto Exchange UIDs ──────────────────
+# our_uid: YOUR uid on that exchange — users send USDT here
+# Leave our_uid = '' to HIDE that exchange from users
+EXCHANGERS = {
+    'binance': {
+        'name': 'Binance', 'emoji': '🟡',
+        'our_uid': '837755101',          # ← put your Binance UID here
+        'uid_label': 'Binance UID / Pay ID',
+        'deposit_note_en': 'Send USDT to our Binance UID via Binance Pay or internal transfer.',
+        'deposit_note_bn': 'আমাদের Binance UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your Binance account.',
+        'withdraw_note_bn': 'আমরা আপনার Binance একাউন্টে USDT পাঠাব।',
+    },
+    'bybit': {
+        'name': 'Bybit', 'emoji': '🟠',
+        'our_uid': '251189431',
+        'uid_label': 'Bybit UID',
+        'deposit_note_en': 'Send USDT to our Bybit UID via internal transfer.',
+        'deposit_note_bn': 'আমাদের Bybit UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your Bybit account.',
+        'withdraw_note_bn': 'আমরা আপনার Bybit একাউন্টে USDT পাঠাব।',
+    },
+    'okx': {
+        'name': 'OKX', 'emoji': '⚫',
+        'our_uid': '',
+        'uid_label': 'OKX UID',
+        'deposit_note_en': 'Send USDT to our OKX UID via internal transfer.',
+        'deposit_note_bn': 'আমাদের OKX UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your OKX account.',
+        'withdraw_note_bn': 'আমরা আপনার OKX একাউন্টে USDT পাঠাব।',
+    },
+    'bitget': {
+        'name': 'Bitget', 'emoji': '🔷',
+        'our_uid': '',
+        'uid_label': 'Bitget UID',
+        'deposit_note_en': 'Send USDT to our Bitget UID.',
+        'deposit_note_bn': 'আমাদের Bitget UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your Bitget account.',
+        'withdraw_note_bn': 'আমরা আপনার Bitget একাউন্টে USDT পাঠাব।',
+    },
+    'kucoin': {
+        'name': 'KuCoin', 'emoji': '🟢',
+        'our_uid': '',
+        'uid_label': 'KuCoin UID',
+        'deposit_note_en': 'Send USDT to our KuCoin UID.',
+        'deposit_note_bn': 'আমাদের KuCoin UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your KuCoin account.',
+        'withdraw_note_bn': 'আমরা আপনার KuCoin একাউন্টে USDT পাঠাব।',
+    },
+    'mexc': {
+        'name': 'MEXC', 'emoji': '🔵',
+        'our_uid': '',
+        'uid_label': 'MEXC UID',
+        'deposit_note_en': 'Send USDT to our MEXC UID.',
+        'deposit_note_bn': 'আমাদের MEXC UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your MEXC account.',
+        'withdraw_note_bn': 'আমরা আপনার MEXC একাউন্টে USDT পাঠাব।',
+    },
+    'gate': {
+        'name': 'Gate.io', 'emoji': '🔴',
+        'our_uid': '',
+        'uid_label': 'Gate.io UID',
+        'deposit_note_en': 'Send USDT to our Gate.io UID.',
+        'deposit_note_bn': 'আমাদের Gate.io UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your Gate.io account.',
+        'withdraw_note_bn': 'আমরা আপনার Gate.io একাউন্টে USDT পাঠাব।',
+    },
+    'bingx': {
+        'name': 'BingX', 'emoji': '🌀',
+        'our_uid': '',
+        'uid_label': 'BingX UID',
+        'deposit_note_en': 'Send USDT to our BingX UID.',
+        'deposit_note_bn': 'আমাদের BingX UID-এ USDT পাঠান।',
+        'withdraw_note_en': 'We will send USDT to your BingX account.',
+        'withdraw_note_bn': 'আমরা আপনার BingX একাউন্টে USDT পাঠাব।',
+    },
+    'binance_p2p': {
+        'name': 'Binance P2P', 'emoji': '🤝',
+        'our_uid': '',
+        'uid_label': 'Binance UID',
+        'deposit_note_en': 'Send USDT to our Binance UID via Binance Pay/P2P.',
+        'deposit_note_bn': 'আমাদের Binance UID-এ P2P-তে USDT পাঠান।',
+        'withdraw_note_en': 'We will send via Binance P2P to your UID.',
+        'withdraw_note_bn': 'আমরা Binance P2P-তে পাঠাব।',
+    },
+    'bybit_p2p': {
+        'name': 'Bybit P2P', 'emoji': '🤝',
+        'our_uid': '',
+        'uid_label': 'Bybit UID',
+        'deposit_note_en': 'Send USDT to our Bybit UID via Bybit P2P.',
+        'deposit_note_bn': 'আমাদের Bybit UID-এ P2P-তে USDT পাঠান।',
+        'withdraw_note_en': 'We will send via Bybit P2P to your UID.',
+        'withdraw_note_bn': 'আমরা Bybit P2P-তে পাঠাব।',
+    },
+    'okx_p2p': {
+        'name': 'OKX P2P', 'emoji': '🤝',
+        'our_uid': '',
+        'uid_label': 'OKX UID',
+        'deposit_note_en': 'Send USDT to our OKX UID via OKX P2P.',
+        'deposit_note_bn': 'আমাদের OKX UID-এ P2P-তে USDT পাঠান।',
+        'withdraw_note_en': 'We will send via OKX P2P to your UID.',
+        'withdraw_note_bn': 'আমরা OKX P2P-তে পাঠাব।',
+    },
+}
+
+LOCAL_DB         = 'efootball.db'
+SUPPORT_CHAT_ID  = -1001234567890
+
+# ── Admin Panel Settings ──────────────────
+# Set to '0.0.0.0' to allow access from other devices on the same Wi-Fi network using your PC's IP address.
+ADMIN_PANEL_HOST = '0.0.0.0'
+ADMIN_PANEL_PORT = 8000
+
+# ── Turso Cloud Database Settings ─────────
+# Set USE_TURSO = True to sync bot and admin panel data between multiple devices (like PC and Termux)
+USE_TURSO = False
+TURSO_DB_URL = 'libsql://efootball-xxxourov.aws-us-east-2.turso.io'
+TURSO_AUTH_TOKEN = 'YOUR_TURSO_AUTH_TOKEN_HERE'  # Put your Turso Auth Token here
+
+# ── Free Mode ─────────────────────────────
+FREE_MODE = False  # Admin /free_mode on দিলে True হবে
+BOT_USERNAME = 'efootball_matchmaking_bot'  # Bot username without @
+
