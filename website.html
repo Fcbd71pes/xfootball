@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eFootball Tournament Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060810;
+  --card:#0e1420;
+  --card2:#131b2a;
+  --border:#1a2640;
+  --green:#00e676;
+  --green2:#00b85a;
+  --gold:#ffc107;
+  --white:#eef2ff;
+  --gray:#7b8db0;
+  --red:#ff4757;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden}
+
+/* LANG */
+.lang-bar{position:fixed;top:12px;right:12px;z-index:1000;display:flex;background:#0e1420;border:1px solid var(--border);border-radius:24px;overflow:hidden}
+.lang-bar button{padding:7px 18px;border:none;background:transparent;color:var(--gray);font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.lang-bar button.on{background:var(--green);color:#000}
+.bn{display:none}
+body.BN .en{display:none}
+body.BN .bn{display:block}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;background:rgba(6,8,16,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Orbitron',monospace;font-size:16px;color:var(--green);letter-spacing:1px}
+.logo b{color:var(--gold)}
+.nav-a{display:flex;gap:16px}
+.nav-a a{color:var(--gray);text-decoration:none;font-size:13px;font-weight:500;transition:.2s}
+.nav-a a:hover{color:var(--white)}
+@media(max-width:600px){.nav-a{display:none}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:110px 20px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(0,230,118,.08) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(26,38,64,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(26,38,64,.4) 1px,transparent 1px);background-size:50px 50px;pointer-events:none}
+.live-badge{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.4);color:var(--green);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.5px;margin-bottom:24px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.hero h1{position:relative;z-index:1;font-family:'Orbitron',monospace;font-size:clamp(32px,9vw,86px);font-weight:900;line-height:1.05;letter-spacing:-1px}
+.hero h1 .g{color:var(--green)}
+.hero h1 .y{color:var(--gold)}
+.hero-desc{position:relative;z-index:1;margin-top:18px;font-size:clamp(14px,3vw,18px);color:var(--gray);max-width:520px;line-height:1.7}
+.hero-btns{position:relative;z-index:1;margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn-g{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--green);color:#000;font-weight:800;font-size:15px;border-radius:10px;text-decoration:none;transition:.2s;border:none;cursor:pointer}
+.btn-g:hover{background:var(--green2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,230,118,.35)}
+.btn-o{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:transparent;color:var(--white);font-weight:600;font-size:15px;border-radius:10px;text-decoration:none;border:1px solid var(--border);transition:.2s}
+.btn-o:hover{border-color:var(--green);color:var(--green)}
+
+/* STATS */
+.stats{display:flex;justify-content:center;flex-wrap:wrap;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat{text-align:center;padding:20px 28px;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-n{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;color:var(--green)}
+.stat-n.y{color:var(--gold)}
+.stat-l{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+@media(max-width:500px){.stat{padding:16px 14px}.stat-n{font-size:20px}}
+
+/* SECTION */
+.sec{padding:72px 20px;max-width:1080px;margin:0 auto}
+.sec-tag{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+.sec-h{font-family:'Orbitron',monospace;font-size:clamp(22px,4vw,38px);font-weight:700;margin-bottom:12px;line-height:1.2}
+.sec-p{color:var(--gray);font-size:15px;line-height:1.7;max-width:500px;margin-bottom:44px}
+
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.step{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 22px;position:relative;overflow:hidden;transition:.2s}
+.step:hover{border-color:var(--green);transform:translateY(-3px)}
+.step-num{position:absolute;top:-8px;right:14px;font-family:'Orbitron',monospace;font-size:60px;font-weight:900;color:var(--green);opacity:.06;line-height:1}
+.step-ic{font-size:30px;margin-bottom:14px}
+.step-t{font-weight:700;font-size:15px;margin-bottom:7px}
+.step-d{font-size:13px;color:var(--gray);line-height:1.6}
+
+/* FEATURES */
+.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.feat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;gap:14px;align-items:flex-start;transition:.2s}
+.feat:hover{border-color:rgba(0,230,118,.4);transform:translateY(-2px)}
+.feat-ic{width:46px;height:46px;min-width:46px;border-radius:12px;background:rgba(0,230,118,.1);display:flex;align-items:center;justify-content:center;font-size:22px}
+.feat h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.feat p{font-size:12px;color:var(--gray);line-height:1.6}
+
+/* LEADERBOARD */
+.lb{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.lb-row{display:flex;align-items:center;padding:13px 18px;border-bottom:1px solid var(--border);gap:14px;transition:.15s}
+.lb-row:last-child{border:none}
+.lb-row:hover{background:rgba(255,255,255,.03)}
+.lb-rank{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;min-width:32px;color:var(--gray)}
+.lb-rank.g1{color:var(--gold)}
+.lb-rank.g2{color:#b0bec5}
+.lb-rank.g3{color:#cd7f32}
+.lb-name{flex:1;font-weight:600;font-size:14px}
+.lb-elo{font-family:'Orbitron',monospace;font-size:12px;color:var(--green)}
+.lb-wl{font-size:11px;color:var(--gray);min-width:55px;text-align:right}
+.lb-empty{padding:36px;text-align:center;color:var(--gray);font-size:14px}
+
+/* TOURNAMENT */
+.t-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}
+.t-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:.2s}
+.t-card:hover{border-color:rgba(255,193,7,.4)}
+.t-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.t-name{font-weight:700;font-size:15px}
+.t-badge{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+.t-open{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3)}
+.t-run{background:rgba(255,193,7,.15);color:var(--gold);border:1px solid rgba(255,193,7,.3)}
+.t-done{background:rgba(255,255,255,.05);color:var(--gray);border:1px solid var(--border)}
+.t-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.t-row{display:flex;justify-content:space-between;font-size:13px}
+.t-row span:first-child{color:var(--gray)}
+.t-row .prize{color:var(--gold);font-weight:700}
+.prog{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:14px}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:3px;transition:width .5s}
+.t-join{display:block;text-align:center;padding:10px;background:var(--green);color:#000;font-weight:700;font-size:13px;border-radius:8px;text-decoration:none;transition:.2s}
+.t-join:hover{background:var(--green2);transform:translateY(-1px)}
+.t-join.off{background:var(--border);color:var(--gray);pointer-events:none}
+
+/* PAYMENT */
+.pay{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.pay-c{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 14px;text-align:center;transition:.2s}
+.pay-c:hover{border-color:var(--gold);transform:translateY(-2px)}
+.pay-ic{font-size:30px;margin-bottom:8px}
+.pay-n{font-size:13px;font-weight:700}
+.pay-t{font-size:11px;color:var(--gray);margin-top:3px}
+
+/* CTA */
+.cta{background:linear-gradient(135deg,#0a1420 0%,#060810 100%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 20px;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 50% 50%,rgba(0,230,118,.07) 0%,transparent 70%);pointer-events:none}
+.cta h2{font-family:'Orbitron',monospace;font-size:clamp(26px,5vw,50px);font-weight:900;margin-bottom:14px;position:relative}
+.cta p{color:var(--gray);font-size:16px;margin-bottom:32px;position:relative}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:10px}
+.faq-i{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.faq-q{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:600;font-size:14px;user-select:none;transition:.15s}
+.faq-q:hover{background:rgba(255,255,255,.04)}
+.faq-plus{color:var(--green);font-size:20px;font-weight:300;transition:.2s}
+.faq-i.open .faq-plus{transform:rotate(45deg)}
+.faq-a{display:none;padding:0 20px 16px;color:var(--gray);font-size:13px;line-height:1.7;border-top:1px solid var(--border)}
+.faq-i.open .faq-a{display:block}
+
+/* FOOTER */
+footer{background:var(--card);border-top:1px solid var(--border);padding:28px 20px;text-align:center}
+.foot-logo{font-family:'Orbitron',monospace;color:var(--green);font-size:16px;margin-bottom:8px}
+footer p{color:var(--gray);font-size:13px}
+footer a{color:var(--green);text-decoration:none}
+
+/* FADE */
+.fu{opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
+.fu.vis{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body id="B" class="EN">
+
+<!-- Lang -->
+<div class="lang-bar">
+  <button class="on" onclick="setL('EN')">EN</button>
+  <button onclick="setL('BN')">বাং</button>
+</div>
+
+<!-- Nav -->
+<nav>
+  <div class="logo">e<b>Football</b> BOT</div>
+  <div class="nav-a">
+    <a href="#how"><span class="en">How to Play</span><span class="bn">খেলার নিয়ম</span></a>
+    <a href="#features"><span class="en">Features</span><span class="bn">বৈশিষ্ট্য</span></a>
+    <a href="#lb"><span class="en">Leaderboard</span><span class="bn">লিডারবোর্ড</span></a>
+    <a href="#tourney"><span class="en">Tournaments</span><span class="bn">টুর্নামেন্ট</span></a>
+    <a href="#pay"><span class="en">Payment</span><span class="bn">পেমেন্ট</span></a>
+    <a href="#faq">FAQ</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="live-badge">
+    <span class="live-dot"></span>
+    <span class="en">BOT IS LIVE</span>
+    <span class="bn">বট চালু আছে</span>
+  </div>
+  <h1>
+    eFOOTBALL<br>
+    <span class="g">TOURNAMENT</span><br>
+    <span class="y">BOT</span>
+  </h1>
+  <p class="hero-desc">
+    <span class="en">Play 1v1 eFootball matches inside Telegram. Win real money. Compete in tournaments.</span>
+    <span class="bn">Telegram এর ভেতরেই ১v১ eFootball খেলো। আসল টাকা জিতো। টুর্নামেন্টে লড়াই করো।</span>
+  </p>
+  <div class="hero-btns">
+    <a href="https://t.me/esfootball_tournament_bot" class="btn-g" target="_blank">
+      ✈️ <span class="en">Start Playing</span><span class="bn">এখনই শুরু করো</span>
+    </a>
+    <a href="#how" class="btn-o">
+      <span class="en">How it Works</span><span class="bn">কীভাবে খেলবে</span>
+    </a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-n" id="s1">—</div><div class="stat-l"><span class="en">Total Players</span><span class="bn">মোট খেলোয়াড়</span></div></div>
+  <div class="stat"><div class="stat-n y" id="s2">—</div><div class="stat-l"><span class="en">Matches Played</span><span class="bn">মোট ম্যাচ</span></div></div>
+  <div class="stat"><div class="stat-n" id="s3">—</div><div class="stat-l"><span class="en">Active Matches</span><span class="bn">সক্রিয় ম্যাচ</span></div></div>
+  <div class="stat"><div class="stat-n y">1.8×</div><div class="stat-l"><span class="en">Win Multiplier</span><span class="bn">জয়ের গুণক</span></div></div>
+</div>
+
+<!-- HOW -->
+<section class="sec" id="how">
+  <div class="fu">
+    <div class="sec-tag"><span class="en">HOW TO PLAY</span><span class="bn">খেলার নিয়ম</span></div>
+    <div class="sec-h"><span class="en">5 Steps to Win</span><span class="bn">৫ ধাপে জিতো</span></div>
+  </div>
+  <div class="steps fu">
+    <div class="step" data-n="1">
+      <div class="step-num">1</div>
+      <div class="step-ic">💰</div>
+      <div class="step-t"><span class="en">Deposit Balance</span><span class="bn">ব্যালেন্স যোগ করো</span></div>
+      <div class="step-d"><span class="en">Add TK via Binance, bKash, Nagad or Rocket.</span><span class="bn">Binance, বিকাশ, নগদ বা রকেটে টাকা যোগ করো।</span></div>
+    </div>
+    <div class="step" data-n="2">
+      <div class="step-num">2</div>
+      <div class="step-ic">⚔️</div>
+      <div class="step-t"><span class="en">Find Opponent</span><span class="bn">প্রতিপক্ষ খোঁজো</span></div>
+      <div class="step-d"><span class="en">Choose match fee. Bot finds you an opponent instantly.</span><span class="bn">Match fee বেছে নাও। Bot অটোমেটিক প্রতিপক্ষ খুঁজে দেয়।</span></div>
+    </div>
+    <div class="step" data-n="3">
+      <div class="step-num">3</div>
+      <div class="step-ic">🎮</div>
+      <div class="step-t"><span class="en">Play eFootball</span><span class="bn">eFootball খেলো</span></div>
+      <div class="step-d"><span class="en">Create a room in-game, share the 8-digit code.</span><span class="bn">গেমে room বানাও, ৮ সংখ্যার code শেয়ার করো।</span></div>
+    </div>
+    <div class="step" data-n="4">
+      <div class="step-num">4</div>
+      <div class="step-ic">📸</div>
+      <div class="step-t"><span class="en">Submit Screenshot</span><span class="bn">স্ক্রিনশট জমা দাও</span></div>
+      <div class="step-d"><span class="en">Screenshot the final score and send to bot.</span><span class="bn">ফলাফলের screenshot bot এ পাঠাও।</span></div>
+    </div>
+    <div class="step" data-n="5">
+      <div class="step-num">5</div>
+      <div class="step-ic">🏆</div>
+      <div class="step-t"><span class="en">Win 1.8× Prize</span><span class="bn">১.৮× পুরস্কার জিতো</span></div>
+      <div class="step-d"><span class="en">Winner gets 1.8× the match fee. Withdraw anytime.</span><span class="bn">বিজয়ী ম্যাচ ফি-এর ১.৮ গুণ পাবে।</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="sec" id="features" style="padding-top:0">
+  <div class="fu">
+    <div class="sec-tag"><span class="en">FEATURES</span><span class="bn">বৈশিষ্ট্য</span></div>
+    <div class="sec-h"><span class="en">Everything in One Bot</span><span class="bn">সব সুবিধা এক বটে</span></div>
+  </div>
+  <div class="feats fu">
+    <div class="feat"><div class="feat-ic">⚽</div><div><h3><span class="en">1v1 Ranked Matches</span><span class="bn">১v১ র‍্যাংকড ম্যাচ</span></h3><p><span class="en">Compete with real stakes. ELO rating changes every match.</span><span class="bn">আসল দাবায় প্রতিযোগিতা। প্রতি ম্যাচে ELO পরিবর্তন।</span></p></div></div>
+    <div class="feat"><div class="feat-ic">🏆</div><div><h3><span class="en">Tournaments</span><span class="bn">টুর্নামেন্ট</span></h3><p><span class="en">Join weekly tournaments with big prize pools.</span><span class="bn">বড় prize pool এর সাপ্তাহিক টুর্নামেন্টে যোগ দাও।</span></p></div></div>
+    <div class="feat"><div class="feat-ic">💸</div><div><h3><span class="en">Fast Withdrawal</span><span class="bn">দ্রুত উত্তোলন</span></h3><p><span class="en">Withdraw via Binance USDT, bKash, Nagad, Rocket.</span><span class="bn">Binance, বিকাশ, নগদ, রকেটে যেকোনো সময় তুলো।</span></p></div></div>
+    <div class="feat"><div class="feat-ic">🎁</div><div><h3><span class="en">Daily Bonus & Referral</span><span class="bn">ডেইলি বোনাস ও রেফার</span></h3><p><span class="en">Claim daily rewards. Earn bonus for every referral.</span><span class="bn">প্রতিদিন বোনাস নাও। বন্ধু রেফার করে আরো কামাও।</span></p></div></div>
+    <div class="feat"><div class="feat-ic">🛡️</div><div><h3><span class="en">Fair Play</span><span class="bn">ন্যায্য খেলা</span></h3><p><span class="en">Screenshot verified by admins. Fake results = permanent ban.</span><span class="bn">Admin দ্বারা screenshot যাচাই। জাল = স্থায়ী ban।</span></p></div></div>
+    <div class="feat"><div class="feat-ic">📊</div><div><h3><span class="en">ELO Rating</span><span class="bn">ELO রেটিং</span></h3><p><span class="en">Your skill rank. Win to climb the leaderboard.</span><span class="bn">দক্ষতার মাপ। জিতে leaderboard এ উঠো।</span></p></div></div>
+    <div class="feat"><div class="feat-ic">⏱️</div><div><h3><span class="en">Auto Match Timer</span><span class="bn">অটো ম্যাচ টাইমার</span></h3><p><span class="en">15 minute limit. No submission = auto loss.</span><span class="bn">১৫ মিনিট সময়। জমা না দিলে অটো হার।</span></p></div></div>
+    <div class="feat"><div class="feat-ic">🌐</div><div><h3><span class="en">Bilingual Bot</span><span class="bn">দ্বিভাষিক বট</span></h3><p><span class="en">Full Bengali and English support. Switch anytime.</span><span class="bn">পূর্ণ বাংলা ও English সাপোর্ট। যেকোনো সময় পরিবর্তন।</span></p></div></div>
+  </div>
+</section>
+
+<!-- LEADERBOARD -->
+<section class="sec" id="lb" style="padding-top:0">
+  <div class="fu">
+    <div class="sec-tag"><span class="en">RANKINGS</span><span class="bn">র‍্যাংকিং</span></div>
+    <div class="sec-h"><span class="en">Top Players</span><span class="bn">শীর্ষ খেলোয়াড়</span></div>
+  </div>
+  <div class="lb fu" id="lb-box"><div class="lb-empty">Loading...</div></div>
+</section>
+
+<!-- TOURNAMENT -->
+<section class="sec" id="tourney" style="padding-top:0">
+  <div class="fu">
+    <div class="sec-tag"><span class="en">COMPETE</span><span class="bn">প্রতিযোগিতা</span></div>
+    <div class="sec-h"><span class="en">Active Tournaments</span><span class="bn">চলমান টুর্নামেন্ট</span></div>
+  </div>
+  <div class="t-grid fu" id="t-box"><div class="lb-empty">Loading...</div></div>
+</section>
+
+<!-- PAYMENT -->
+<section class="sec" id="pay" style="padding-top:0">
+  <div class="fu">
+    <div class="sec-tag"><span class="en">DEPOSIT & WITHDRAW</span><span class="bn">ডিপোজিট ও উইথড্র</span></div>
+    <div class="sec-h"><span class="en">Payment Methods</span><span class="bn">পেমেন্ট পদ্ধতি</span></div>
+    <p class="sec-p"><span class="en">Fast and secure transactions. Deposit to play, withdraw your winnings anytime.</span><span class="bn">দ্রুত ও নিরাপদ লেনদেন। খেলতে ডিপোজিট করো, জয় যেকোনো সময় তুলো।</span></p>
+  </div>
+  <div class="pay fu">
+    <div class="pay-c"><div class="pay-ic">🟡</div><div class="pay-n">Binance</div><div class="pay-t">USDT (TRC20)</div></div>
+    <div class="pay-c"><div class="pay-ic">🩷</div><div class="pay-n">বিকাশ</div><div class="pay-t">Mobile Banking</div></div>
+    <div class="pay-c"><div class="pay-ic">🟠</div><div class="pay-n">নগদ</div><div class="pay-t">Mobile Banking</div></div>
+    <div class="pay-c"><div class="pay-ic">🔴</div><div class="pay-n">রকেট</div><div class="pay-t">Mobile Banking</div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta">
+  <h2><span class="en">Ready to Play?</span><span class="bn">খেলতে প্রস্তুত?</span></h2>
+  <p><span class="en">Join the community and start winning today.</span><span class="bn">এখনই যোগ দাও এবং জিততে শুরু করো।</span></p>
+  <a href="https://t.me/esfootball_tournament_bot" class="btn-g" target="_blank" style="font-size:16px;padding:16px 36px">
+    ✈️ <span class="en">Open in Telegram</span><span class="bn">Telegram এ খোলো</span>
+  </a>
+</div>
+
+<!-- FAQ -->
+<section class="sec" id="faq">
+  <div class="fu">
+    <div class="sec-tag">FAQ</div>
+    <div class="sec-h"><span class="en">Common Questions</span><span class="bn">সাধারণ প্রশ্ন</span></div>
+  </div>
+  <div class="faq-list fu" id="faq-box"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">eFOOTBALL BOT</div>
+  <p><span class="en">Powered by Telegram • </span><span class="bn">Telegram দ্বারা চালিত • </span><a href="https://t.me/esfootball_tournament_bot">@esfootball_tournament_bot</a></p>
+</footer>
+
+<script>
+// ── Language ──────────────────────────────
+function setL(l){
+  document.getElementById('B').className=l;
+  document.querySelectorAll('.lang-bar button').forEach((b,i)=>{
+    b.classList.toggle('on',(i===0&&l==='EN')||(i===1&&l==='BN'));
+  });
+  localStorage.setItem('lang',l);
+  buildFaq();
+}
+var SL=localStorage.getItem('lang')||'EN';
+setL(SL);
+
+// ── FAQ Data ──────────────────────────────
+var FAQ_EN=[
+  {q:"How do I start playing?",a:"Open @esfootball_tournament_bot on Telegram, register your ingame name, deposit balance, and tap Play 1v1!"},
+  {q:"What is the prize for winning?",a:"Winner gets 1.8× the match fee. Example: 100 TK match → winner gets 180 TK."},
+  {q:"How do I deposit?",a:"Go to Wallet → Deposit. Choose Binance USDT or mobile banking (bKash, Nagad, Rocket). Send and submit your transaction screenshot."},
+  {q:"What if my opponent doesn't submit results?",a:"If only you submit within 15 minutes, you win automatically. If neither submits, match is cancelled and fees refunded."},
+  {q:"How do I withdraw?",a:"Go to Wallet → Withdraw, choose your method, enter amount. Admin processes it shortly."},
+  {q:"What is ELO rating?",a:"Your skill score. It goes up when you win and down when you lose. Higher ELO = better rank."},
+  {q:"How do I join a tournament?",a:"Go to Tournaments, pay the entry fee, and wait for it to start. Winners take the full prize pool."},
+  {q:"What happens with fake screenshots?",a:"Fake screenshots = permanent ban. All results are verified by admins."},
+  {q:"How does the referral system work?",a:"Share your referral link. When your friend deposits, you earn a bonus automatically."},
+  {q:"Is there a daily bonus?",a:"Yes! Use /daily command every day to claim your free bonus."},
+];
+var FAQ_BN=[
+  {q:"কীভাবে শুরু করব?",a:"Telegram এ @esfootball_tournament_bot খোলো, ingame নাম দাও, balance যোগ করো, Play 1v1 চাপো!"},
+  {q:"জিতলে কত পাব?",a:"বিজয়ী ম্যাচ ফি-এর ১.৮ গুণ পাবে। যেমন: ১০০ টাকার ম্যাচে জিতলে ১৮০ টাকা।"},
+  {q:"কীভাবে ডিপোজিট করব?",a:"Wallet → Deposit এ যাও। Binance USDT বা মোবাইল ব্যাংকিং বেছে নাও। টাকা পাঠাও ও screenshot জমা দাও।"},
+  {q:"প্রতিপক্ষ রেজাল্ট না দিলে কী হবে?",a:"১৫ মিনিটে শুধু তুমি দিলে তুমি automatically জিতবে। দুইজনই না দিলে match cancel ও refund।"},
+  {q:"কীভাবে টাকা তুলব?",a:"Wallet → Withdraw এ যাও, পদ্ধতি ও পরিমাণ দাও। Admin শীঘ্রই process করবে।"},
+  {q:"ELO রেটিং কী?",a:"তোমার দক্ষতার স্কোর। জিতলে বাড়ে, হারলে কমে। বেশি ELO = leaderboard এ উপরে।"},
+  {q:"টুর্নামেন্টে কীভাবে যোগ দেব?",a:"Tournaments এ যাও, entry fee দিয়ে join করো। বিজয়ী সম্পূর্ণ prize pool পাবে।"},
+  {q:"জাল screenshot দিলে কী হবে?",a:"জাল screenshot = স্থায়ী ban। সব রেজাল্ট admin যাচাই করে।"},
+  {q:"রেফারেল কীভাবে কাজ করে?",a:"তোমার referral link শেয়ার করো। বন্ধু deposit করলে তুমি বোনাস পাবে।"},
+  {q:"ডেইলি বোনাস আছে কি?",a:"হ্যাঁ! প্রতিদিন /daily command দিয়ে ফ্রি বোনাস নাও।"},
+];
+
+function buildFaq(){
+  var isBN=document.getElementById('B').className==='BN';
+  var data=isBN?FAQ_BN:FAQ_EN;
+  var box=document.getElementById('faq-box');
+  box.innerHTML=data.map(function(f,i){
+    return '<div class="faq-i" id="fi'+i+'"><div class="faq-q" onclick="tFaq('+i+')"><span>'+f.q+'</span><span class="faq-plus">+</span></div><div class="faq-a">'+f.a+'</div></div>';
+  }).join('');
+}
+function tFaq(i){document.getElementById('fi'+i).classList.toggle('open')}
+
+// ── Load Stats ────────────────────────────
+function loadStats(){
+  fetch('/api/stats').then(function(r){return r.json()}).then(function(d){
+    document.getElementById('s1').textContent=(d.total_users||0).toLocaleString();
+    document.getElementById('s2').textContent=(d.total_matches||0).toLocaleString();
+    document.getElementById('s3').textContent=(d.active_matches||0).toLocaleString();
+  }).catch(function(){});
+}
+
+// ── Load Leaderboard ──────────────────────
+function loadLB(){
+  var box=document.getElementById('lb-box');
+  fetch('/api/leaderboard').then(function(r){return r.json()}).then(function(data){
+    if(!data||!data.length){box.innerHTML='<div class="lb-empty">No players yet</div>';return;}
+    var medals=['g1','g2','g3'];
+    var icons=['🥇','🥈','🥉'];
+    box.innerHTML=data.slice(0,10).map(function(p,i){
+      return '<div class="lb-row"><div class="lb-rank '+(medals[i]||'')+'">'+(i<3?icons[i]:i+1)+'</div><div class="lb-name">'+esc(p.ingame_name||'?')+'</div><div class="lb-elo">⭐ '+(p.elo||1000)+'</div><div class="lb-wl">'+(p.wins||0)+'W/'+(p.losses||0)+'L</div></div>';
+    }).join('');
+  }).catch(function(){box.innerHTML='<div class="lb-empty">Could not load</div>';});
+}
+
+// ── Load Tournaments ──────────────────────
+function loadT(){
+  var box=document.getElementById('t-box');
+  var isBN=document.getElementById('B').className==='BN';
+  fetch('/api/tournaments').then(function(r){return r.json()}).then(function(data){
+    if(!data||!data.length){
+      box.innerHTML='<div class="lb-empty">'+(isBN?'কোনো tournament নেই':'No active tournaments')+'</div>';
+      return;
+    }
+    box.innerHTML=data.map(function(t){
+      var pct=Math.round((t.joined/t.slots)*100)||0;
+      var sc=t.status==='OPEN'?'t-open':t.status==='RUNNING'?'t-run':'t-done';
+      var sl=t.status==='OPEN'?(isBN?'খোলা':'Open'):t.status==='RUNNING'?(isBN?'চলছে':'Running'):(isBN?'শেষ':'Ended');
+      var canJoin=t.status==='OPEN'&&t.joined<t.slots;
+      var joinTxt=canJoin?(isBN?'যোগ দাও':'Join Now'):(isBN?'পূর্ণ':'Full / Ended');
+      return '<div class="t-card"><div class="t-head"><div class="t-name">🏆 '+esc(t.name)+'</div><div class="t-badge '+sc+'">'+sl+'</div></div><div class="t-rows"><div class="t-row"><span>'+(isBN?'এন্ট্রি ফি':'Entry Fee')+'</span><span>'+t.entry_fee+' TK</span></div><div class="t-row"><span>'+(isBN?'প্রাইজ':'Prize Pool')+'</span><span class="prize">'+t.prize_pool+' TK</span></div><div class="t-row"><span>'+(isBN?'খেলোয়াড়':'Players')+'</span><span>'+t.joined+'/'+t.slots+'</span></div></div><div class="prog"><div class="prog-f" style="width:'+pct+'%"></div></div><a href="https://t.me/esfootball_tournament_bot?start=tjoin_'+t.id+'" class="t-join'+(canJoin?'':' off')+'" target="_blank">'+joinTxt+'</a></div>';
+    }).join('');
+  }).catch(function(){box.innerHTML='<div class="lb-empty">Could not load</div>';});
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// ── Scroll Fade ───────────────────────────
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('vis');});
+},{threshold:.1});
+document.querySelectorAll('.fu').forEach(function(el){obs.observe(el);});
+
+// ── Init ──────────────────────────────────
+buildFaq();
+loadStats();
+loadLB();
+loadT();
+setInterval(loadStats,30000);
+setInterval(loadLB,60000);
+setInterval(loadT,60000);
+</script>
+</body>
+</html>
